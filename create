@@ -1,0 +1,5 @@
+mkdir src/day${1}
+cat template/puzzle.ts|sed "s/%puzzle%/${1}A/g" > src/day${1}/a.ts 
+cat template/puzzle.ts|sed "s/%puzzle%/${1}B/g" > src/day${1}/b.ts 
+touch src/day${1}/input.txt
+touch src/day${1}/test.txt

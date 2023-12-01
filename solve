@@ -1,0 +1,13 @@
+FILTER=$1
+if [ "$FILTER" == "" ]
+then
+    FILTER='';
+fi
+for file in `find src -name "*.ts" | grep day${FILTER}  | sort`
+do
+    FILENAME=`basename $file`
+    DIRNAME=`dirname $file`
+    cd $DIRNAME
+    ts-node $FILENAME $2 $3 $4 $5
+    cd - > /dev/null
+done

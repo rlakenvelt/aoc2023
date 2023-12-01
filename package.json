@@ -1,0 +1,18 @@
+{
+  "name": "aoc2023",
+  "version": "1.0.0",
+  "description": "Advent of Code 2023",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "AOC2021"
+  ],
+  "author": "Roel Lakenvelt",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^16.11.10",
+    "tslib": "^2.3.1"
+  }
+}
