@@ -12,7 +12,7 @@ export default class InputHelper {
   getRawInput (name=(this.testmode ? "test" : "input")) {
     return fs.readFileSync(`./${name}.txt`, "utf-8");
   };
-  getInput (separator = "\n", name=(this.testmode ? "test" : "input")) {
+  getInput (separator = "\n", name=(this.testmode ? "test" : "input")): string[] {
     const file = fs.readFileSync(`./${name}.txt`, "utf-8");
     return file.split(separator).map(x =>x);
   };
