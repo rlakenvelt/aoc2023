@@ -15,19 +15,13 @@ logger.start();
 let symbols = lines.map((line, index) => {
                         const matches = Array.from(line.matchAll(/([^\w])/g))
                         return matches.filter((match)=>match[0].toString()!=='.')
-                                    .map(match => {
-                                            return {symbol: match[0].toString(), x: match.index}
-                                    })
-                                    .map(n=> {return {...n, y: index, parts: [] as number[]}})
+                                    .map(match => {return {symbol: match[0].toString(), x: match.index, y: index, parts: [] as number[]}})
                     })
                     .flat()
 
 let numbers = lines.map((line, index) => {
                             const matches = Array.from(line.matchAll(/(\d{1,9})/g))
-                            return matches.map(match => {
-                                                return {number: parseInt(match[0]), x: match.index}
-                                           })
-                                           .map(n=> {return {...n, y: index}})
+                            return matches.map(match => {return {number: parseInt(match[0]), x: match.index, y: index}})
                         })
                     .flat()
                     .filter(filterNumbersWithAdjacentSymbol)
