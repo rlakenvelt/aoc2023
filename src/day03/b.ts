@@ -12,17 +12,10 @@ const directions = Direction.directionsWithDiagonals();
 
 logger.start();
 
-let symbols = lines.map((line, index) => {
-                        const matches = Array.from(line.matchAll(/([^\w])/g))
-                        return matches.filter((match)=>match[0].toString()!=='.')
-                                    .map(match => {return {symbol: match[0].toString(), x: match.index, y: index, parts: [] as number[]}})
-                    })
+let symbols = lines.map((line, index) => Array.from(line.matchAll(/([^\w^.])/g)).map(match => {return {symbol: match[0].toString(), x: match.index, y: index, parts: [] as number[]}}))
                     .flat()
 
-let numbers = lines.map((line, index) => {
-                            const matches = Array.from(line.matchAll(/(\d{1,9})/g))
-                            return matches.map(match => {return {number: parseInt(match[0]), x: match.index, y: index}})
-                        })
+let numbers = lines.map((line, index) => Array.from(line.matchAll(/(\d{1,9})/g)).map(match => {return {number: parseInt(match[0]), x: match.index, y: index}}))
                     .flat()
                     .filter(filterNumbersWithAdjacentSymbol)
   
