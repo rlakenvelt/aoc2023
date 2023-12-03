@@ -12,7 +12,7 @@
   "author": "Roel Lakenvelt",
   "license": "ISC",
   "devDependencies": {
-    "@types/node": "^16.11.10",
+    "@types/node": "^16.18.66",
     "tslib": "^2.3.1"
   }
 }
