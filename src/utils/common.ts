@@ -14,5 +14,10 @@ export default class Common {
         const maxValue = this.arrayMax(array);
         return array.reduce((min, i) => {return Math.min(min,i)}, maxValue);
     }
-
+    static total(total: number, i: number) {
+        return total+=i;
+    }
+    static multiply(total: number, i: number) {
+        return total*=i;
+    }
 }

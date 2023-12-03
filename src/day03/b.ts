@@ -1,6 +1,7 @@
 import InputHelper from '../utils/input';
 import Logger from '../utils/logger';
 import { Direction } from '../utils/grid';
+import Common from '../utils/common';
 
 const puzzle = 'Day 03B: Gear Ratios'
 const input = new InputHelper();
@@ -32,8 +33,8 @@ let numbers = lines.map((line, index) => {
                     .filter(filterNumbersWithAdjacentSymbol)
   
 let answer = symbols.filter(symbol => symbol.symbol==='*' && symbol.parts.length===2)
-                    .map(symbol=> symbol.parts.reduce((total, part) => { total*=part; return total}, 1))
-                    .reduce((total, value) => {total+=value; return total}, 0)
+                    .map(symbol=> symbol.parts.reduce(Common.multiply, 1))
+                    .reduce(Common.total, 0)
                                  
 logger.end(answer);
 
