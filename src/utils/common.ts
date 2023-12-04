@@ -20,4 +20,13 @@ export default class Common {
     static multiply(total: number, i: number) {
         return total*=i;
     }
+    static splitLine(line: string, separators: string[]): any {
+        const lines = line.trim().split(separators[0]);
+        if (separators.length === 1) 
+           return lines;
+        let newseparators = [...separators]
+        newseparators.shift();
+        return lines.map(l => Common.splitLine(l, newseparators))
+    }
+
 }
