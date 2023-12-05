@@ -7,6 +7,7 @@ interface Range {
     range: number;
 }
 interface Map {
+    index: number
     source: string;
     destination: string;
     ranges: Range[]
@@ -20,11 +21,12 @@ logger.start();
 
 const data = input.getInput('\n\n');
 let seeds = data.shift()?.split(':')[1].trim().split(' ').map(c=>parseInt(c));
-const maps = data.reduce((list: Map[], line) => {
+const maps = data.reduce((list: Map[], line, index) => {
     const t = line.split('\n');
     let s = t.shift()?.split(' ')[0].split('-');
     if (!s) s = []
     const map: Map = {
+        index: index,
         source: s[0],
         destination: s[2],
         ranges: []
@@ -48,22 +50,17 @@ let answer = Number.MAX_VALUE;
 if (!seeds) seeds=[]
 for (let i=0; i<seeds.length; i+=2) {
     for (let j=0; j<seeds[i+1]; j++) {
-        let conversion = getConversion('seed', seeds[i] + j);
-        while (conversion.target !== 'location') {
-            conversion = getConversion(conversion.target, conversion.nr);
-        }
-        answer = Math.min(answer, conversion.nr)        
+        let nr = seeds[i] + j;
+        maps.forEach(map => {
+            const range = map?.ranges.find(r=> {
+                return r.sourceStart<=nr && r.sourceStart+r.range>=nr;
+            })         
+            nr = range ? range.destinationStart + nr - range.sourceStart: nr;    
+        })
+        answer = Math.min(answer, nr)        
     }
 }
 
-
-function getConversion(source: string | undefined, nr: number): {target: string | undefined, nr: number} {
-    const map = maps.find(m=> m.source === source)
-    const range = map?.ranges.find(r=> {
-        return r.sourceStart<=nr && r.sourceStart+r.range>=nr;
-    })
-    return {target: map?.destination, nr: range ? range.destinationStart + nr - range.sourceStart: nr}
-}
 
 logger.end(answer);
 
