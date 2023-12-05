@@ -45,19 +45,14 @@ const maps = data.reduce((list: Map[], line) => {
 
 let answer = Number.MAX_VALUE;
 if (!seeds) seeds=[]
-console.log(seeds)
-for (let i=0; i<seeds.length; i+=2) {
-    console.log(seeds[i], seeds[i+1])
 
-}
-
-// seeds?.forEach(seed => {
-//     let conversion = getConversion('seed', seed);
-//     while (conversion.target !== 'location') {
-//         conversion = getConversion(conversion.target, conversion.nr);
-//     }
-//     answer = Math.min(answer, conversion.nr)
-// })
+seeds?.forEach(seed => {
+    let conversion = getConversion('seed', seed);
+    while (conversion.target !== 'location') {
+        conversion = getConversion(conversion.target, conversion.nr);
+    }
+    answer = Math.min(answer, conversion.nr)
+})
 
 
 function getConversion(source: string | undefined, nr: number): {target: string | undefined, nr: number} {
