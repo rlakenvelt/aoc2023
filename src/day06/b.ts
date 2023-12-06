@@ -6,8 +6,8 @@ const input = new InputHelper();
 const logger = new Logger(puzzle);
 
 const inputValues = input.getInput();
-const time = parseInt(inputValues[0].split(':')[1].replace(/[^\d]/g, ''))
-const record = parseInt(inputValues[1].split(':')[1].replace(/[^\d]/g, ''))
+const time = parseInt(inputValues[0].replace(/[^\d]/g, ''))
+const record = parseInt(inputValues[1].replace(/[^\d]/g, ''))
 
 logger.start();
 
