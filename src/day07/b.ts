@@ -1,16 +1,18 @@
 import InputHelper from '../utils/input';
 import Logger from '../utils/logger';
 
-const puzzle = 'Day 07A: Camel Cards'
+const puzzle = 'Day 07B: Camel Cards'
 const input = new InputHelper();
 const logger = new Logger(puzzle);
-const CARDS = 'AKQJT98765432'
+const CARDS = 'AKQT98765432J'
 interface Hand {
     cards: string[];
     bid: number;
     strength: number;
-    rank: number,
+    rank: number
 }
+
+// 249817836
 const hands: Hand[] = input.getInput()
                            .map(line => {
                             const parts = line.split(' ');
@@ -25,27 +27,29 @@ const hands: Hand[] = input.getInput()
 logger.start();
 
 hands.forEach(hand => {
-    const cardscount = CARDS.split('')
+    let cardscount = CARDS.split('')
                             .map(c=>{ return {card: c, count: hand.cards.join('').match(new RegExp(c, 'g'))?.length || 0}})
                             .filter(c=>c.count>0)
                             .sort((a,b) => b.count-a.count)
-    if (cardscount.length === 1) {
+    const jokers = cardscount.find(card=>card.card === 'J') || {card: 'J', count: 0};
+    cardscount = cardscount.filter(card=>card.card!=='J')
+    if (cardscount.length <= 1) {
         hand.strength = 7; 
     } else
-    if (cardscount.length === 2 && cardscount[0].count === 4) {
+    if (cardscount.length === 2 && cardscount[0].count + jokers.count === 4) {
         hand.strength = 6; 
     } else
     if (cardscount.length === 2 ) {
-        hand.strength = 5;
+        hand.strength = 5; 
     } else
-    if (cardscount.length === 3 && cardscount[0].count === 3) {
+    if (cardscount.length === 3 && cardscount[0].count + jokers.count === 3) {
         hand.strength = 4; 
     } else
     if (cardscount.length === 3 ) {
         hand.strength = 3; 
     } else
     if (cardscount.length === 4 ) {
-        hand.strength = 2; 
+        hand.strength = 2;
     } else {
         hand.strength = 1;
     }   
