@@ -9,7 +9,6 @@ interface Hand {
     cards: string[];
     bid: number;
     strength: number;
-    rank: number,
 }
 const hands: Hand[] = input.getInput()
                            .map(line => {
@@ -17,8 +16,7 @@ const hands: Hand[] = input.getInput()
                             return {
                                 cards: parts[0].split(''),
                                 bid:parseInt(parts[1]),
-                                strength: 0,
-                                rank: 0
+                                strength: 0
                             }
                            });
 
