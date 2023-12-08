@@ -14,10 +14,10 @@ const inputValues = input.getInput('\n\n');
 const instructions = inputValues[0].split('').map(i=>i==='L'?0:1);
 const navigations = inputValues[1].split('\n')
                                   .map(line => {
-                                    const parts = line.replace(/[\w ]/g, ' ')
+                                    const parts = line.match(/(\w+)/g) || []
                                     const n: Navigation = {
-                                        key: line.substring(0, 3),
-                                        next: [line.substring(7, 10), line.substring(12, 15)]
+                                        key: parts[0] || '',
+                                        next: [parts[1], parts[2]]
                                     }
                                     return n
                                   });
@@ -40,8 +40,4 @@ do {
     if(instruction>MAX) instruction=0;
 } while (true);
 
-
-
-
 logger.end(answer);
-

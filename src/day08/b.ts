@@ -15,24 +15,21 @@ const inputValues = input.getInput('\n\n');
 const instructions = inputValues[0].split('').map(i=>i==='L'?0:1);
 const navigations = inputValues[1].split('\n')
                                   .map(line => {
-                                    const parts = line.replace(/[\w ]/g, ' ')
+                                    const parts = line.match(/(\w+)/g) || []
                                     const n: Navigation = {
-                                        key: line.substring(0, 3),
-                                        next: [line.substring(7, 10), line.substring(12, 15)]
+                                        key: parts[0] || '',
+                                        next: [parts[1], parts[2]]
                                     }
                                     return n
                                   });
-
-logger.start();
-
-
-
 const MAX=instructions.length - 1;
 
+logger.start();
 
 let trips: Navigation[] = navigations.filter(n=>n.key.match(/..A/))
 let counts = trips.map(()=>0)
 
+// Calculate trip length for each sepearate trip
 let instruction = 0;
 do {
     trips = trips.map((trip, index)=> {
@@ -46,9 +43,5 @@ do {
     if(instruction>MAX) instruction=0;
 } while (true);
 
-let answer = counts.reduce(MathUtils.lcm)
-
-
-
-logger.end(answer);
-
+// Answer is LCM of all separate trips
+logger.end(counts.reduce(MathUtils.lcm));
