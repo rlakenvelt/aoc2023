@@ -40,7 +40,6 @@ let start: Tile = {
     x: rawInput.indexOf('S') % (inputValues[0].length + 1),
     y: Math.floor(rawInput.indexOf('S') / (inputValues[0].length + 1))
 }
-console.log(start)
 const startPipe: Pipe = {
     symbol: 'S',
     display: 'S',
@@ -63,23 +62,68 @@ pipeTypes[0].connectors = connectors;
 let currentTile = {...start}
 let currentUsed = 0
 logger.start();
-let answer = 0;
 
 do {
-    answer++;
     let { tile, used } = getNext(currentTile, currentUsed);
     currentTile = {...tile}
     currentUsed = used
 } while (currentTile.x!=start.x||currentTile.y!=start.y)
 
-display('O');
 
+let answer = 0;
 
-logger.end(answer / 2);
+displaygrid.forEach((row, y)=> {
+    let inside = false;
+    let direction = 0;
+    row.forEach((col, x) => {
+        if (col==='S') {
+            const pipeS = pipeTypes[0]
+            pipeTypes.forEach(p=>{
+                if (p.symbol!=='.' &&
+                     p.symbol!=='S' &&
+                    p.connectors[0].x === pipeS.connectors[0].x &&
+                    p.connectors[0].y === pipeS.connectors[0].y &&
+                    p.connectors[1].x === pipeS.connectors[1].x &&
+                    p.connectors[1].y === pipeS.connectors[1].y) {
+                        col=p.symbol
+                        }                     
+            })
+        }
+        switch(col) {
+            case 'F':
+                direction=1;
+                break;
+            case '|':
+                inside=!inside
+                break;
+            case '-':
+                break;
+            case 'L':
+                direction=-1;
+                break;                                   
+            case 'J':
+                if (direction===1) inside=!inside
+                break;
+            case '7':
+                if (direction===-1) inside=!inside
+                break;  
+            case 'O':
+                if (inside) {
+                    displaygrid[y][x] = 'I'
+                    answer++
+                } 
+                break;                                                 
+          }        
+
+    })
+})
+// display('O');
+
+logger.end(answer);
 
 function getNext(tile: Tile, used: number) {
     const currentPipe: Pipe = grid[tile.y][tile.x]
-    displaygrid[tile.y][tile.x] = currentPipe.display
+    displaygrid[tile.y][tile.x] = currentPipe.symbol
 
     const use = used ? 0 : 1;
     const nextTile = {x: tile.x + currentPipe.connectors[use].x, y: tile.y + currentPipe.connectors[use].y}
@@ -98,7 +142,6 @@ function display(hightlight?: string) {
             const regex = new RegExp(hightlight, 'g');
             temp = temp.replace(regex, highlight(hightlight));
         }
-        console.log(temp);
     })
 } 
 
