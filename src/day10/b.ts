@@ -12,7 +12,6 @@ interface Connector {
 }
 interface Pipe {
     symbol: string;
-    display: string;
     connectors: Connector[];
 }
 
@@ -24,14 +23,14 @@ const rawInput = input.getRawInput();
 const inputValues = rawInput.split('\n');
 
 const pipeTypes: Pipe[] = [
-    {symbol: 'S', display: 'S', connectors: []},
-    {symbol: '.', display: '.', connectors: []},
-    {symbol: '|', display: '\u2503', connectors: [{x:  0, y:-1}, {x: 0, y: 1}]},
-    {symbol: '-', display: '\u2501', connectors: [{x: -1, y: 0}, {x: 1, y: 0}]},
-    {symbol: 'L', display: '\u2517', connectors: [{x:  0, y:-1}, {x: 1, y: 0}]},
-    {symbol: 'J', display: '\u251B', connectors: [{x: -1, y: 0}, {x: 0, y:-1}]},
-    {symbol: '7', display: '\u2513', connectors: [{x: -1, y: 0}, {x: 0, y: 1}]},
-    {symbol: 'F', display: '\u250F', connectors: [{x:  1, y: 0}, {x: 0, y: 1}]},
+    {symbol: 'S', connectors: []},
+    {symbol: '.', connectors: []},
+    {symbol: '|', connectors: [{x:  0, y:-1}, {x: 0, y: 1}]},
+    {symbol: '-', connectors: [{x: -1, y: 0}, {x: 1, y: 0}]},
+    {symbol: 'L', connectors: [{x:  0, y:-1}, {x: 1, y: 0}]},
+    {symbol: 'J', connectors: [{x: -1, y: 0}, {x: 0, y:-1}]},
+    {symbol: '7', connectors: [{x: -1, y: 0}, {x: 0, y: 1}]},
+    {symbol: 'F', connectors: [{x:  1, y: 0}, {x: 0, y: 1}]},
 ]
 const grid: Pipe[][] = inputValues.map(x=>x.split('').map(x=>pipeTypes.find(p=>p.symbol===x) || pipeTypes[0]));
 const displaygrid: string[][] = inputValues.map(x=>x.split('').map(()=>'O'));
@@ -42,7 +41,6 @@ let start: Tile = {
 }
 const startPipe: Pipe = {
     symbol: 'S',
-    display: 'S',
     connectors: []
 } 
 const directions = Direction.directionsWithoutDiagonals();
@@ -117,7 +115,6 @@ displaygrid.forEach((row, y)=> {
 
     })
 })
-// display('O');
 
 logger.end(answer);
 
@@ -134,17 +131,3 @@ function getNext(tile: Tile, used: number) {
     }) 
     return {tile: nextTile, used}
 }
-
-function display(hightlight?: string) {
-    displaygrid.forEach(row => {
-        let temp = row.join('');
-        if (hightlight) {
-            const regex = new RegExp(hightlight, 'g');
-            temp = temp.replace(regex, highlight(hightlight));
-        }
-    })
-} 
-
-function highlight(t: string):string {
-    return `\x1b[1m\x1b[31m${t}\x1b[0m`;
-}  
