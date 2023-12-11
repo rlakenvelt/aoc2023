@@ -2,7 +2,7 @@ import InputHelper from '../utils/input';
 import Logger from '../utils/logger';
 import { Point } from '../utils/grid'
 
-const puzzle = 'Day 11A: Cosmic Expansion'
+const puzzle = 'Day 11B: Cosmic Expansion'
 const input = new InputHelper();
 const logger = new Logger(puzzle);
 
@@ -34,7 +34,7 @@ const galaxies = grid.reduce((list, row, y) => {
 
 let answer = 0;
 
-const GROW = 1;
+const GROW = 999999;
 
 for (let i = 0; i<galaxies.length-1; i++) {
     for (let j = i + 1; j<galaxies.length; j++) {
