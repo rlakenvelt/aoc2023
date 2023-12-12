@@ -56,20 +56,20 @@ function convertMatch(match: RegExpMatchArray): {part: string, index: number} {
 function getAllPermutations(broken: number, other: number) {
     let result: string[] = [];
 
-    function recursePermutation(current: string) {
+    function recursePermutation(current: string, currentBroken: number, currentOther: number) {
+        // console.log(current, currentBroken, currentOther)
         if (current.length === broken + other) {
             result.push(current);
             return;
         }
-        if (broken > 0) {
-            recursePermutation(current + '#');
+        if (currentBroken > 0) {
+            recursePermutation(current + '#', currentBroken - 1, currentOther);
         }
-        if (other > 0) {
-            recursePermutation(current + '.');
+        if (currentOther > 0) {
+            recursePermutation(current + '.', currentBroken, currentOther - 1);
         }
     }
-    recursePermutation('');
+    recursePermutation('', broken, other);
     return result;
 }
-
 
