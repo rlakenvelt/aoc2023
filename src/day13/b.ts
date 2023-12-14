@@ -19,30 +19,19 @@ grids.forEach((grid, index)=> {
     let originalRow = getMirroredRow(grid)
     let originalCol = getMirroredRow(rotatedGrid(grid))
 
-
-    console.log('GRID', index, originalRow, originalCol)
-    // displayGrid(grid)
-
     for (let y = 0; y < grid.length; y++) {
         for (let x = 0; x < grid[0].length; x++) {
             const workgrid = grid.map(row=>[...row])
             workgrid[y][x] = workgrid[y][x]==='.'?'#':'.';
-            // displayGrid(workgrid)
             let row = getMirroredRow(workgrid, originalRow)
             let col = getMirroredRow(rotatedGrid(workgrid), originalCol)
-
-            
-            // console.log('A', index, y, x, mirroredRows)
-            if (row+col>0) {
-                // console.log(x,y)
-                // displayGrid(workgrid)
-                mirroredRows=row*100+col
-                break;
-            }        
+            if (col===0 && row===0) continue
+            if (originalCol===col && originalRow===row) continue
+            mirroredRows = col !== 0 ? col : row * 100          
+            break
         }
         if (mirroredRows>0) break
     }
-    // console.log(index, mirroredRows)
     answer+=mirroredRows
 })
 
@@ -60,7 +49,7 @@ function getRow(grid: string[][], row: number) {
 
 function rotatedGrid(grid: string[][]) {
     let newgrid: string[][] = [];
-    for (let i = 0; i < grid.length; i++) {
+    for (let i = 0; i < grid[0].length; i++) {
         newgrid.push(getColumn(grid, i).split(''))
     }
     return newgrid;
@@ -72,6 +61,7 @@ function getMirroredRow(grid: string[][], except: number = 0) {
         if (getRow(grid, y) === getRow(grid, y + 1)) {
             const checklines = Math.min(y, grid.length - y - 2)
             let mirrorOK = true;
+            
             for (let c = 1; c<=checklines; c++) {
                 if (getRow(grid, y-c)  != getRow(grid, y+1+c) ) {
                     mirrorOK = false;
@@ -84,12 +74,6 @@ function getMirroredRow(grid: string[][], except: number = 0) {
         }
     }  
     return 0;
-}
-
-function displayGrid(grid: string[][]) {
-    grid.forEach(line=> {
-        console.log(line.join(''))
-    })
 }
 
 
