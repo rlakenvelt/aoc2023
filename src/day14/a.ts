@@ -1,7 +1,5 @@
 import InputHelper from '../utils/input';
 import Logger from '../utils/logger';
-import { Direction, Grid } from '../utils/grid';
-
 
 const puzzle = 'Day 14A: Parabolic Reflector Dish'
 const input = new InputHelper();
@@ -9,43 +7,11 @@ const logger = new Logger(puzzle);
 
 const inputValues = input.getInput().map(line=>line.split(''));
 
+logger.start();
+
 let grid = rotatedGrid(inputValues)
 
-// displayGrid(grid)
-
-// const grid = new Grid<string>(inputValues[0].length, inputValues.length)
-
-
-// grid.setGrid(inputValues)
-
-// grid.display();
-
-// console.log(grid.height)
-
-logger.start();
-let answer = 0;
-
-for (let row=0; row<grid.length; row++) {
-    let line = grid[row].join('')
-
-    do {
-        line = line.replace('O.', '.O');
-    } while (line.indexOf('O.')>=0)
-
-    for (let col = 0; col<line.length; col++) {
-        if (line[col] === 'O') {
-            answer+=col+1;
-        }
-    }
-    // console.log(line)
-    
-
-}
-// console.log('')
-// displayGrid(grid)
-
-
-
+let answer = countLoad(tilt(grid));
 
 logger.end(answer);
 
@@ -69,4 +35,28 @@ function displayGrid(grid: string[][]) {
     grid.forEach(line=> {
         console.log(line.join(''))
     })
+}
+
+function tilt(grid: string[][]) {
+    const workgrid=grid.map(l=>[...l])
+
+    return workgrid.map(line=> {
+        let workline = line.join('')     
+        while (workline.indexOf('O.')>=0) {
+            workline = workline.replace('O.', '.O');
+        } 
+        return workline.split('')
+    })
+}
+
+function countLoad(grid: string[][]) {
+    let result = 0
+    for (let row=0; row<grid.length; row++) {
+        for (let col = 0; col<grid[0].length; col++) {
+            if (grid[row][col] === 'O') {
+                result+=col+1;
+            }
+        }
+    }
+    return result
 }
