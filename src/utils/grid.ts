@@ -18,6 +18,7 @@ export class Line {
 export class Direction {
     x: number = 0;
     y: number = 0;
+    symbol?: string;
 
     static directionsWithDiagonals(): Direction[] {
         return [
@@ -33,10 +34,10 @@ export class Direction {
     }
     static directionsWithoutDiagonals(): Direction[] {
         return [
-            {x: 1, y: 0},
-            {x: 0, y: -1},
-            {x: -1, y: 0},
-            {x: 0, y: 1}
+            {x: 1, y: 0, symbol: 'E'},
+            {x: 0, y: -1, symbol: 'N'},
+            {x: -1, y: 0, symbol: 'W'},
+            {x: 0, y: 1, symbol: 'S'}
         ]        
     }
 }
