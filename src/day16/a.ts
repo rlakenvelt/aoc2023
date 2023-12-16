@@ -18,10 +18,10 @@ class Beam {
         const currentDirection = Direction.directionsWithoutDiagonals().filter(d=>d.symbol===this.direction)[0]
         this.posistion = new Point(this.posistion.x + currentDirection.x, this.posistion.y + currentDirection.y)
 
-        if (contraption.isInsideGrid(this.posistion.x, this.posistion.y) && 
-            (energized.grid[this.posistion.y][this.posistion.x] !== '#' || contraption.grid[this.posistion.y][this.posistion.x] !== '.')) {
+        if (contraption.isInsideGrid(this.posistion.x, this.posistion.y) &&
+            energized.filter(e=>e.from=== this.direction&&e.tile.x===this.posistion.x&&e.tile.y===this.posistion.y).length===0) {
             this.path.push(this.posistion)
-            energized.grid[this.posistion.y][this.posistion.x] = '#'
+            energized.push({from: this.direction, tile: this.posistion})
         } else {
             this.done = true;
             return
@@ -47,12 +47,6 @@ class Beam {
                 break;
             }
     }
-    display() {
-        console.log('D:', this.direction, 'P:', this.posistion, this.path.length, this.done)
-        // this.path.forEach(p=> {
-        //     console.log('   ', p)
-        // })
-    }
 }
 
 
@@ -64,14 +58,11 @@ const beams: Beam[] = [new Beam(-1,0)]
 
 const inputValues = input.getInput().map(l=>l.split(''));
 const contraption: Grid<string> = new Grid(inputValues[0].length, inputValues.length)
-const energized: Grid<string> = new Grid(inputValues[0].length, inputValues.length, '.')
-
+const energized: {from: string, tile: Point}[] = [];
 
 contraption.setGrid(inputValues)
 
-contraption.display()
 logger.start();
-
 
 do {
     const beam = beams.filter(beam=> beam.done===false)[0]
@@ -79,18 +70,10 @@ do {
     beam.move()
 } while (true)
 
-beams.forEach(b=>{
-    b.display()
+energized.forEach(e=> {
+    contraption.grid[e.tile.y][e.tile.x] = '#'
 })
-energized.display()
-
-let answer = energized.grid.flat().join('').match(/#/g)?.length;
-
-
+let answer = contraption.grid.flat().join('').match(/#/g)?.length;
 
 logger.end(answer);
-
-function activeBeams(): number {
-    return beams.filter(beam=> beam.done===false).length
-}
 
