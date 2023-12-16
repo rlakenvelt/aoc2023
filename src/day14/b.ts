@@ -4,21 +4,21 @@ import Logger from '../utils/logger';
 const puzzle = 'Day 14B: Parabolic Reflector Dish'
 const input = new InputHelper();
 const logger = new Logger(puzzle);
-
+let loads: number[] = [];
 let grid = input.getInput().map(line=>line.split(''));
 
 logger.start();
 
-let answer = 0; //countLoad(tilt(grid));
+grid = rotatedGrid(grid)
 
-for (let c = 0; c < 2; c++) {
-    // console.log('CYCLE', c)
+do {
     grid = cycle(grid)
-    // displayGrid(grid)
-    answer = countLoad(grid)
-    console.log('LOAD', c, answer)
-}
+    loads.push(countLoad(grid))
+} while (repeatingPattern(loads) === -1)
 
+const pattern = repeatingPattern(loads);
+const cycles = (1000000000 - loads.length) ; 
+let answer = loads[loads.length + (cycles % pattern) - 1 - pattern]
 
 logger.end(answer);
 
@@ -38,13 +38,6 @@ function getColumn(grid: string[][], column: number) {
     }, '')
 }
 
-function displayGrid(grid: string[][]) {
-    grid.forEach(line=> {
-        console.log(line.join(''))
-    })
-    console.log('')
-}
-
 function tilt(grid: string[][]) {
     const workgrid=grid.map(l=>[...l])
 
@@ -58,14 +51,14 @@ function tilt(grid: string[][]) {
 }
 
 function cycle(grid: string[][]) {
-    let workgrid = rotatedGrid(grid)
-    workgrid = tilt(workgrid)
+    let workgrid = tilt(grid)
     workgrid = rotatedGrid(workgrid)
     workgrid = tilt(workgrid)
     workgrid = rotatedGrid(workgrid)
     workgrid = tilt(workgrid)
     workgrid = rotatedGrid(workgrid)
     workgrid = tilt(workgrid)
+    workgrid = rotatedGrid(workgrid)
     return workgrid;
 }
 function countLoad(grid: string[][]) {
@@ -77,8 +70,18 @@ function countLoad(grid: string[][]) {
                 rowresult+=col+1;
             }
         }
-        console.log(grid[row].join(''), rowresult)
         result+=rowresult
     }
     return result
+}
+
+function repeatingPattern(list: number[]) {
+    const r = list.map(l=>l).reverse();
+    const last = r.shift() || 0;
+    const nextIndex = r.indexOf(last);
+    if (nextIndex<=0) return -1;
+    for (let i = 0; i < nextIndex; i++) {
+        if (r[i] != r[nextIndex+i+1]) return -1
+    }
+    return nextIndex + 1;
 }
