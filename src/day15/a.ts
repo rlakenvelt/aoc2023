@@ -9,14 +9,10 @@ const inputValues = input.getInput(',');
 
 logger.start();
 
-// hash('HASH')
-
 let answer = inputValues.reduce((total, value) => {
     total+=hash(value)
     return total
 }, 0);
-
-
 
 logger.end(answer);
 
@@ -28,7 +24,6 @@ function hash(input: string): number {
        result*=17
        result = result % 256
     }
-    console.log(input, result)
     return result
 }
 
