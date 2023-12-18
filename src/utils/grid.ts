@@ -1,46 +1,5 @@
-export class Point {
-    x: number = 0;
-    y: number = 0;
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-    }
-}
-export class Line {
-    from: Point;
-    to: Point;
+import { Direction } from "./direction";
 
-    constructor(from: Point, to: Point) {
-        this.from = from;
-        this.to = to;
-    }
-}
-export class Direction {
-    x: number = 0;
-    y: number = 0;
-    symbol: string = '';
-
-    static directionsWithDiagonals(): Direction[] {
-        return [
-            {x: 1, y: 0, symbol: 'E'},
-            {x: 1, y: -1, symbol: 'NE'},
-            {x: 0, y: -1, symbol: 'N'},
-            {x: -1, y: -1, symbol: 'NW'},
-            {x: -1, y: 0, symbol: 'W'},
-            {x: -1, y: 1, symbol: 'SW'},
-            {x: 0, y: 1, symbol: 'S'},
-            {x: 1, y: 1, symbol: 'SE'}
-        ]        
-    }
-    static directionsWithoutDiagonals(): Direction[] {
-        return [
-            {x: 1, y: 0, symbol: 'E'},
-            {x: 0, y: -1, symbol: 'N'},
-            {x: -1, y: 0, symbol: 'W'},
-            {x: 0, y: 1, symbol: 'S'}
-        ]        
-    }
-}
 
 export class Grid<T> {
     grid: T[][] = [][0];
@@ -117,4 +76,20 @@ export class Grid<T> {
         if (y>this.height-1) return false;
         return true;
     }  
+
+    floodFill (x: number, y: number, color: T) {
+        const current = this.grid[y][x];       
+        if(current === color) return
+        const queue = [{x, y}]
+        while (queue.length > 0) {
+            const n = queue.pop();
+            if (!n) break
+            this.grid[n.y][n.x] = color
+            Direction.directionsWithoutDiagonals().forEach(d=>{
+                if (this.isInsideGrid(n.x+d.x , n.y+d.y) && this.grid[n.y+d.y][n.x+d.x] !== color) {
+                    queue.push({x: n.x+d.x, y: n.y+d.y})
+                }
+            })
+        }
+    };
 }
