@@ -1,6 +1,7 @@
 import InputHelper from '../utils/input';
 import Logger from '../utils/logger';
-import { Grid, Direction } from '../utils/grid'
+import { Direction } from '../utils/direction'
+import { Grid } from '../utils/grid'
 
 class EnergyLoss {
     path: string

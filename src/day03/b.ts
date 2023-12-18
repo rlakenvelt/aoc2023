@@ -1,6 +1,6 @@
 import InputHelper from '../utils/input';
 import Logger from '../utils/logger';
-import { Direction } from '../utils/grid';
+import { Direction } from '../utils/direction';
 import Common from '../utils/common';
 import { MatchUtils, NumberMatch } from '../utils/match';
 

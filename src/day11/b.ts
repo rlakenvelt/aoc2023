@@ -1,6 +1,6 @@
 import InputHelper from '../utils/input';
 import Logger from '../utils/logger';
-import { Point } from '../utils/grid'
+import { Point } from '../utils/point'
 
 const puzzle = 'Day 11B: Cosmic Expansion'
 const input = new InputHelper();

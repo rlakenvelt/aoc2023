@@ -1,6 +1,8 @@
 import InputHelper from '../utils/input';
 import Logger from '../utils/logger';
-import { Grid, Direction, Point } from '../utils/grid';
+import { Direction } from '../utils/direction';
+import { Grid } from '../utils/grid';
+import { Point } from '../utils/point';
 
 class Beam {
     posistion: Point
