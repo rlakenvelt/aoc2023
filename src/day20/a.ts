@@ -10,79 +10,62 @@ class Module {
     }
     addConnection(module: Module) {
         this.connection.push(module)
+        module.registerSource(this)
     }
-    receivePulse(pulse: number, source?: Module) {
-        console.log('RECEIVE', source?.name, pulse, this.name)
+    registerSource(module: Module) {
     }
-    executePulse() {
-        // console.log('EXECUTE', this.name)
+    sendPulse(pulse: number, source?: Module) {
+        // console.log(source?.name, pulse ? 'high' : 'low', '->', this.name)
     }
+
 }
 class FlipFlop extends Module{
-    lastPulse: number = 0
     on: boolean = false;
-    receivePulse(pulse: number, source?: Module) {
-        super.receivePulse(pulse, source)
-        this.lastPulse = pulse
-    }
-    executePulse() {
-        super.executePulse()
-        if (this.lastPulse===1) return
+    sendPulse(pulse: number, source?: Module) {
+        super.sendPulse(pulse, source)
+
+        if (pulse===1) return
         this.on = !this.on
         this.connection.forEach(m=> {
-            if (this.on)
-                m.receivePulse(1, this)
-            else
-                m.receivePulse(0, this)
-        })
-        this.connection.forEach(m=> {
-            m.executePulse()
+            pulseQueue.push({from: this, to: m, pulse: Number(this.on)})
         })
     }    
 }
 class Conjunction extends Module{
     memory: {module: string, pulse: number}[] = []
-    receivePulse(pulse: number, source?: Module) {
-        super.receivePulse(pulse, source)
-        if (!source) return
-        let memory=this.memory.find(m=>m.module = source.name)
-        if (!memory) {
-            memory = {module: source.name, pulse: pulse}
-            this.memory.push(memory)
-        }
+    registerSource(module: Module) {
+        this.memory.push({module: module.name, pulse: 0})
+
     }
-    executePulse() {
-        super.executePulse()
-        const newPulse = this.memory.some(m=>m.pulse===0) ? 1 : 0;
+    sendPulse(pulse: number, source?: Module) {
+        super.sendPulse(pulse, source)
+        if (!source) return
+        let memory=this.memory.find(m=>m.module===source.name)
+        if (memory) memory.pulse=pulse
         this.connection.forEach(m=> {
-            m.receivePulse(newPulse, this)
-        })
-        this.connection.forEach(m=> {
-            m.executePulse()
+            pulseQueue.push({from: this, to: m, pulse: this.memory.some(m=>m.pulse===0) ? 1 : 0})
         })
     }    
 }
 class Broadcaster extends Module{
-    private pulse: number = 0;
-    receivePulse(pulse: number, source?: Module) {
-        super.receivePulse(pulse, source)
-        this.pulse = pulse
-        this.executePulse()
-    }
-    executePulse() {
-        super.executePulse()
+    sendPulse(pulse: number, source?: Module) {
+        super.sendPulse(pulse, source)
         this.connection.forEach(m=> {
-            m.receivePulse(this.pulse, this)
-        })
-        this.connection.forEach(m=> {
-            m.executePulse()
+            pulseQueue.push({from: this, to: m, pulse: pulse})
         })
     }
+}
+
+interface Pulse {
+    from: Module
+    to: Module
+    pulse: number
 }
 
 const puzzle = 'Day 20A: Pulse Propagation'
 const input = new InputHelper();
 const logger = new Logger(puzzle);
+const pulseQueue: Pulse[] = [] 
 
 const inputValues = input.getInput();
 
@@ -114,18 +97,37 @@ inputValues.forEach(line=> {
     })
 })
 connections.forEach(c=> {
-    const moduleFrom = modules.find(m=>m.name===c.from)
-    const moduleTo = modules.find(m=>m.name===c.to)
-    if (moduleFrom&&moduleTo) moduleFrom.addConnection(moduleTo)
+    const moduleFrom = modules.find(m=>m.name===c.from) || new Module(c.from)
+    const moduleTo = modules.find(m=>m.name===c.to) || new Module(c.to)
+    moduleFrom.addConnection(moduleTo)
 })
 
 logger.start();
 const broadcaster = modules.find(m=> m.name==='broadcaster')
 if (broadcaster)
-    broadcaster.receivePulse(0)
-let answer = 0;
+    pulseQueue.push({from: broadcaster, to: broadcaster, pulse: 0})
 
 
+    let lowPulses = 0;
+let highPulses = 0;
+let button = 1;
+while (true) {
+    const pulse = pulseQueue.shift()
+    if (!pulse) {
+        button++
+        if (button>1000) break
+        if (broadcaster)
+            pulseQueue.push({from: broadcaster, to: broadcaster, pulse: 0})
+    }
+    if (pulse) {
+        if (pulse.pulse)
+            highPulses++
+        else 
+            lowPulses++
+        pulse.to.sendPulse(pulse.pulse, pulse.from)
+    }
+}
+let answer = lowPulses * highPulses;
 
 logger.end(answer);
 
