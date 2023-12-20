@@ -132,8 +132,7 @@ while (true) {
         buttonPresses++
         if (broadcaster)
             pulseQueue.push({from: broadcaster, to: broadcaster, pulse: 0})
-    }
-    if (pulse) {
+    } else {
         if (hfHighOccurs.every(o=>o.buttonPresses>0)) {
           break
         }
@@ -141,12 +140,7 @@ while (true) {
     }
 }
 
-let answer = hfHighOccurs.reduce((total, b) => {
-    if (total===0)
-       return b.buttonPresses
-    else
-       return MathUtils.lcm(total, b.buttonPresses)
-}, 0)
+let answer = hfHighOccurs.map(h=>h.buttonPresses).reduce(MathUtils.lcm)
 
 logger.end(answer);
 
