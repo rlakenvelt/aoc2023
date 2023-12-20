@@ -42,8 +42,9 @@ class Conjunction extends Module{
         if (!source) return
         let memory=this.memory.find(m=>m.module===source.name)
         if (memory) memory.pulse=pulse
+        const allOn = !this.memory.some(m=>m.pulse===0)
         this.connection.forEach(m=> {
-            pulseQueue.push({from: this, to: m, pulse: this.memory.some(m=>m.pulse===0) ? 1 : 0})
+            pulseQueue.push({from: this, to: m, pulse: allOn ? 0 : 1})
         })
     }    
 }
