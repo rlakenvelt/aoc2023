@@ -62,6 +62,11 @@ export class Grid<T> {
             console.log(temp);
         })
     } 
+    node(x: number, y: number) {
+        if (this.isInsideGrid(x, y))
+            return this.grid[y][x];
+        return undefined
+    }    
     isOutsideGrid(x: number, y: number) {
         if (x<0) return true;
         if (x>this.width-1) return true;
