@@ -1,7 +1,7 @@
 import InputHelper from '../utils/input';
 import Logger from '../utils/logger';
 
-const puzzle = 'Day 24B'
+const puzzle = 'Day 24B: Never Tell Me The Odds'
 const input = new InputHelper();
 const logger = new Logger(puzzle);
 

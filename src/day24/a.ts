@@ -26,7 +26,7 @@ if (Common.testMode()) {
 }
 
 
-const puzzle = 'Day 24A'
+const puzzle = 'Day 24A: Never Tell Me The Odds'
 const input = new InputHelper();
 const logger = new Logger(puzzle);
 
