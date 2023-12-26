@@ -19,18 +19,13 @@ class Brick {
     maxY: number
     minZ: number
     maxZ: number
-    name: string
-    constructor(corner1: Cube, corner2: Cube, name?: string) {
+    constructor(corner1: Cube, corner2: Cube) {
         this.minX = Math.min(corner1.x, corner2.x)
         this.maxX = Math.max(corner1.x, corner2.x)
         this.minY = Math.min(corner1.y, corner2.y)
         this.maxY = Math.max(corner1.y, corner2.y)
         this.minZ = Math.min(corner1.z, corner2.z)
         this.maxZ = Math.max(corner1.z, corner2.z)
-        if (name)
-           this.name = name
-        else
-           this.name = String.fromCharCode(64+this.minZ)
     }
     get atFloor() {
         return this.minZ===1;
@@ -63,7 +58,7 @@ inputValues.forEach(line=> {
     const c1 = createCube(parts[0])
     const c2 = createCube(parts[1])
     i++
-    if (c1&&c2) bricks.push(new Brick(c1, c2, i.toString()))
+    if (c1&&c2) bricks.push(new Brick(c1, c2))
 })
 logger.start();
 
