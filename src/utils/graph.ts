@@ -1,18 +1,18 @@
-export class Vertex {
-    name: string
-    edges: Map<string, number>
-    constructor(name: string) {
+export class Vertex<T> {
+    name: T
+    edges: Map<T, number>
+    constructor(name: T) {
         this.name = name
         this.edges = new Map()
     }
 }
 
-export class Graph {
-    private vertices: Map<string, Vertex>
+export class Graph<T> {
+    private vertices: Map<T, Vertex<T>>
     private directed: boolean = false
     private weighted: boolean = false
-    private visited: Set<string> = new Set();
-    private costs: Map<string, number> = new Map()
+    private visited: Set<T> = new Set();
+    private costs: Map<T, number> = new Map()
 
     constructor(directed?: boolean, weighted?: boolean) {
         this.vertices = new Map();
@@ -20,7 +20,7 @@ export class Graph {
         if (weighted!==undefined) this.weighted = weighted
     }
 
-    addEdge(from: string, to: string, weight: number = 1) {
+    addEdge(from: T, to: T, weight: number = 1) {
         if (!this.vertices.has(from)) this.vertices.set(from, new Vertex(from))
         if (!this.vertices.has(to)) this.vertices.set(to, new Vertex(to))
         this.vertices.get(from)?.edges.set(to, weight)
@@ -47,21 +47,22 @@ export class Graph {
         this.costs = new Map();
     }
 
-    bfs(start: string)
+    bfs(start: T)
     {
         this.reset()
-        const queue: string[] = [];
-        const result: string[] = [];
+        const queue: T[] = [];
+        const result: T[] = [];
 
         this.visited.add(start);
         result.push(start);
         queue.push(start)
 
         while (queue.length) {
-            const vertexname: string = queue.shift() || '';
+            const vertexname: T | undefined = queue.shift();
+            if (vertexname===undefined) break
             const vertex = this.vertices.get(vertexname)
             if (!vertex) break
-            for (let [edge, weight] of vertex.edges.entries()) {
+            for (let edge of vertex.edges.keys()) {
                 if (!this.visited.has(edge)) {
                     this.visited.add(edge);
                     result.push(edge);
@@ -71,22 +72,23 @@ export class Graph {
         }
         return result
     }
-    dfs(start: string)
+    dfs(start: T)
     {
         this.reset()
-        const stack: string[] = [];
-        const result: string[] = [];
+        const stack: T[] = [];
+        const result: T[] = [];
 
         stack.push(start)
       
         while (stack.length) {
-            const vertexname: string = stack.pop() || '';
+            const vertexname: T | undefined = stack.pop() ;
+            if (vertexname===undefined) break
             const vertex = this.vertices.get(vertexname)
       
             if (!this.visited.has(vertexname)&&vertex) {
                 this.visited.add(vertexname);
                 result.push(vertexname);
-                for (let [edge, weight] of vertex.edges.entries()) {
+                for (let edge of vertex.edges.keys()) {
                     stack.push(edge);
                 }
           }
@@ -96,7 +98,7 @@ export class Graph {
 
     nearestUnvisitedVertex () {
           let shortest  = Infinity;
-          let foundVertex = '';
+          let foundVertex: T | undefined = undefined;
 
           for (let [vertex, weight] of this.costs.entries()) {
               if (weight < shortest && !this.visited.has(vertex)) {
@@ -104,19 +106,20 @@ export class Graph {
                   foundVertex = vertex
               }
           }
+          if (foundVertex===undefined) return undefined
           return this.vertices.get(foundVertex);
       };
 
-    dijkstra(start: string, finish: string) {
+    dijkstra(start: T, finish: T) {
         this.reset()
-        const queue: string[] = []; 
-        const parents: Map<string, string> = new Map();
+        const queue: T[] = []; 
+        const parents: Map<T, T> = new Map();
 
         const startVertex = this.vertices.get(start)
         if (!startVertex) return
 
         this.costs.set(start, 0)
-        parents.set(finish, '')
+        parents.set(finish, finish)
 
         for (const [edge, weight] of startVertex.edges.entries()) {
             this.costs.set(edge, weight)
