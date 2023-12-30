@@ -156,63 +156,50 @@ export class Graph<T> {
         return {costs: this.costs.get(finish), path: shortestPath}
     }
 
+    kargerMinCut() {
+        let vertices: {name: T, joins: T[]}[] = []
+        let edges: {from: T, to: T}[] = []
+        this.vertices.forEach(vertex=> {
+            vertices.push({name:vertex.name, joins:[vertex.name]})
+            for (let edge of vertex.edges.keys()) {
+                if (!edges.find(e=>e.from===edge&&e.to===vertex.name)) {
+                    edges.push({from: vertex.name, to: edge})
+                }
+            }
+        })
+        // console.log('START')
+        // console.log(vertices)
+        // console.log(edges)
+        while (vertices.length > 2) {
+            let i = Math.floor(Math.random() * edges.length)
+            const edge = edges[i]  
+            // console.log(`Removing edge from ${edge.from} to ${edge.to}`)   
+            const v1 = vertices.find(v=>v.name===edge.from)        
+            const v2 = vertices.find(v=>v.name===edge.to)   
+            // console.log('V1', v1)
+            // console.log('V2', v2)
+            if (!v1||!v2) break  
+            v1.joins.push(...v2.joins)   
+            vertices = vertices.filter(v=>v.name!==v2.name) 
+            edges.forEach(edge=> {
+                if (edge.from===v2.name) edge.from = v1.name
+                if (edge.to===v2.name) edge.to = v1.name
+            })
+            edges = edges.filter(edge=>edge.from!==edge.to)
+            // console.log('VERTICES AFTER', vertices)
+            // console.log('EDGES AFTER', edges)
+
+        }
+        return {vertices, edges}
+     
+    }
+
+  
+     
 
 
-    // minimumEdgeCut(numEdgesToRemove: number) {
-    //     let vertices = this.vertices.size;
-    //     let removed: Set<string> = new Set();
-    
-    //     while (vertices > 1) {
-    //         let maxDegree = -1;
-    //         let currentVertex: Vertex | null = null;
-    
-    //         for (let vertex of this.vertices.values()) {
-    //             if (!removed.has(vertex.name) && vertex.edges.size > maxDegree) {
-    //                 maxDegree = vertex.edges.size;
-    //                 currentVertex = vertex;
-    //             }
-    //         }
-    //         // console.log(vertices, currentVertex)
-    //         if (currentVertex === null) {
-    //             break; // No more vertices to process
-    //         }
-    
-    //         removed.add(currentVertex.name);
-    //         vertices--;
-    
-    //         for (let neighbor of currentVertex.edges.values()) {
-    //             if (!removed.has(neighbor)) {
-    //                 // Update the degrees of neighbors when a vertex is removed
-    //                 this.vertices.get(neighbor)?.edges.delete(currentVertex.name);
-    //                 vertices--;
-    //             }
-    //         }
-    //     }
-    
-    //     // Identify and remove the specified number of edges
-    //     let edgesToRemove = 0;
-    //     for (let vertex of this.vertices.values()) {
-    //         if (removed.has(vertex.name)) {
-    //             edgesToRemove++;
-    //             if (edgesToRemove === numEdgesToRemove) {
-    //                 break;
-    //             }
-    //         }
-    //     }
-    
-    //     // The remaining vertices form one part of the cut, and the removed vertices form the other part
-    //     let cutPart1: string[] = [];
-    //     let cutPart2: string[] = [];
-    
-    //     for (let vertex of this.vertices.values()) {
-    //         if (removed.has(vertex.name)) {
-    //             cutPart2.push(vertex.name);
-    //         } else {
-    //             cutPart1.push(vertex.name);
-    //         }
-    //     }
-    
-    //     return { cutPart1, cutPart2 };
-    // }
+ 
+
+
     
 }

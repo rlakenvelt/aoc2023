@@ -10,15 +10,22 @@ const inputValues = input.getInput();
 
 const graph = new Graph();
 
+
+logger.start();
+
 inputValues.forEach(line=> {
     const parts = line.match(/(\w+)/g) || ['']
     for (let p = 1; p<parts.length; p++) {
         graph.addEdge(parts[0], parts[p])
     }
 })
-logger.start();
+let result = graph.kargerMinCut()
+while (result.edges.length !== 3) {
+    result = graph.kargerMinCut()
+}
 
-graph.display()
+logger.end(result.vertices[0].joins.length*result.vertices[1].joins.length);
+
 
 
 
