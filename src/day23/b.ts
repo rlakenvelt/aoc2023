@@ -20,41 +20,6 @@ const map: Grid<string> = new Grid(inputValues[0].length, inputValues.length)
 const crossroads: Set<number> = new Set()
 const roads: Road[] = []
 
-
-class Hike {
-    path = new Set<number>()
-    x: number
-    y: number
-    length: number = 0
-    sizes:  number[] = []
-    constructor(path?: Set<number>) {
-      if (path)
-         this.path = new Set(path)
-      else
-         this.path = new Set()  
-      this.x = 0
-      this.y = 0
-    }
-    addToPath(road: Road) {
-      this.path.add(key(road.to.x, road.to.y))
-      this.x = road.to.x
-      this.y = road.to.y
-      this.length+=road.length
-      this.sizes.push(road.length)
-    //   console.log(road.length, this.length)
-    }
-    visited(x: number, y:number) {
-        // console.log(x, y, this.path.has(key(x, y)))
-        return this.path.has(key(x, y))
-    }
-    clone() {
-      const newHike = new Hike(this.path)
-      newHike.x = this.x
-      newHike.y = this.y
-      newHike.length = this.length
-      return newHike
-    }
-}
 map.setGrid(inputValues)
 const start: Point = {x: 1, y: 0}
 const finish: Point = {x: map.width-2, y: map.height-1}
@@ -64,14 +29,12 @@ logger.start();
 getCrossRoads()
 getRoads()
 
-const graph = new Graph<number>(true, true)
+const graph = new Graph<number>(false, true)
 roads.forEach(road=> {
     graph.addEdge(key(road.from.x, road.from.y), key(road.to.x, road.to.y), road.length)
 })
-let result = graph.dijkstra(key(start.x, start.y), key(finish.x, finish.y))
-
-logger.end(result?.costs);
-
+const answer = graph.dfs(key(start.x, start.y), key(finish.x, finish.y)).map(p=>p.costs).sort((a, b)=>b-a)[0]
+logger.end(answer);
 
 function key (x:number, y: number) {
     return y*1000+x
@@ -120,7 +83,6 @@ function getRoads() {
                 } 
                 road.to = { x: tx, y: ty}
                 roads.push(road)
-                // console.log('ROAD', road)    
         })
     })
 }

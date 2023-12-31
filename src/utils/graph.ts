@@ -47,7 +47,7 @@ export class Graph<T> {
         this.costs = new Map();
     }
 
-    bfs(start: T)
+    bfs(start: T, finish?: T)
     {
         this.reset()
         const queue: T[] = [];
@@ -72,28 +72,36 @@ export class Graph<T> {
         }
         return result
     }
-    dfs(start: T)
-    {
-        this.reset()
-        const stack: T[] = [];
-        const result: T[] = [];
+    dfs(start: T, finish: T) {
+        const paths = this.dfsPaths(start, finish);
+        return paths.map(path=> {
+            let costs = 0
+            let vertex = this.vertices.get(path[0])
+            for (let p = 1; p<path.length; p++) {
+                costs+=vertex?.edges.get(path[p]) || 0
+                vertex = this.vertices.get(path[p])
+            }
+            return {path, costs}
+        })
+    }
 
-        stack.push(start)
-      
-        while (stack.length) {
-            const vertexname: T | undefined = stack.pop() ;
-            if (vertexname===undefined) break
-            const vertex = this.vertices.get(vertexname)
-      
-            if (!this.visited.has(vertexname)&&vertex) {
-                this.visited.add(vertexname);
-                result.push(vertexname);
-                for (let edge of vertex.edges.keys()) {
-                    stack.push(edge);
-                }
-          }
-        }    
-        return result;
+    private dfsPaths(start: T, finish: T, visited = new Set(), path: T[] = [], paths: T[][] = []) {
+        visited.add(start);
+        path.push(start);
+    
+        if (start === finish) {
+            paths.push([...path]);
+            return paths
+        } 
+
+        const vertex = this.vertices.get(start)
+        if (!vertex) return paths    
+        for (let edge of vertex.edges.keys()) {
+            if (!visited.has(edge)) {
+                this.dfsPaths(edge, finish, new Set([...visited]), [...path], paths);
+            }
+        }
+        return paths;
     }
 
     nearestUnvisitedVertex () {
@@ -167,17 +175,11 @@ export class Graph<T> {
                 }
             }
         })
-        // console.log('START')
-        // console.log(vertices)
-        // console.log(edges)
         while (vertices.length > 2) {
             let i = Math.floor(Math.random() * edges.length)
             const edge = edges[i]  
-            // console.log(`Removing edge from ${edge.from} to ${edge.to}`)   
             const v1 = vertices.find(v=>v.name===edge.from)        
             const v2 = vertices.find(v=>v.name===edge.to)   
-            // console.log('V1', v1)
-            // console.log('V2', v2)
             if (!v1||!v2) break  
             v1.joins.push(...v2.joins)   
             vertices = vertices.filter(v=>v.name!==v2.name) 
@@ -186,20 +188,8 @@ export class Graph<T> {
                 if (edge.to===v2.name) edge.to = v1.name
             })
             edges = edges.filter(edge=>edge.from!==edge.to)
-            // console.log('VERTICES AFTER', vertices)
-            // console.log('EDGES AFTER', edges)
-
         }
-        return {vertices, edges}
-     
+        return {vertices, edges}    
     }
-
   
-     
-
-
- 
-
-
-    
 }
