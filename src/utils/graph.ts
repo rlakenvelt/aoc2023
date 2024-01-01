@@ -42,36 +42,41 @@ export class Graph<T> {
         }
 
     }
-    reset() {
-        this.visited = new Set();
-        this.costs = new Map();
-    }
 
-    bfs(start: T, finish?: T)
-    {
-        this.reset()
-        const queue: T[] = [];
-        const result: T[] = [];
-
-        this.visited.add(start);
-        result.push(start);
-        queue.push(start)
-
+    bfs(start: T, finish: T) {
+        const paths: T[][] = [];
+        const queue: {vertex: T, path: T[]}[] = [{ vertex: start, path: [start] }];
+        const visited = new Set();
+    
         while (queue.length) {
-            const vertexname: T | undefined = queue.shift();
-            if (vertexname===undefined) break
-            const vertex = this.vertices.get(vertexname)
-            if (!vertex) break
-            for (let edge of vertex.edges.keys()) {
-                if (!this.visited.has(edge)) {
-                    this.visited.add(edge);
-                    result.push(edge);
-                    queue.push(edge);
-                }
+          const q = queue.shift();
+          if (!q) break
+    
+          visited.add(q.vertex);
+    
+          if (q.vertex === finish) {
+            paths.push([...q.path]);
+          }
+          const vertex = this.vertices.get(q.vertex)
+          if (!vertex) break
+          for (let edge of vertex.edges.keys()) {    
+            if (!visited.has(edge)) {
+              queue.push({ vertex: edge, path: [...q.path, edge] });
             }
+          }
         }
-        return result
-    }
+        return paths.map(path=> {
+            let costs = 0
+            let vertex = this.vertices.get(path[0])
+            for (let p = 1; p<path.length; p++) {
+                costs+=vertex?.edges.get(path[p]) || 0
+                vertex = this.vertices.get(path[p])
+            }
+            return {path, costs}
+        })    
+        // return paths;
+    }       
+
     dfs(start: T, finish: T) {
         const paths = this.dfsPaths(start, finish);
         return paths.map(path=> {
@@ -98,13 +103,13 @@ export class Graph<T> {
         if (!vertex) return paths    
         for (let edge of vertex.edges.keys()) {
             if (!visited.has(edge)) {
-                this.dfsPaths(edge, finish, new Set([...visited]), [...path], paths);
+                paths = this.dfsPaths(edge, finish, new Set([...visited]), [...path], paths);
             }
         }
         return paths;
     }
 
-    nearestUnvisitedVertex () {
+    private nearestUnvisitedVertex () {
           let shortest  = Infinity;
           let foundVertex: T | undefined = undefined;
 
@@ -119,7 +124,8 @@ export class Graph<T> {
       };
 
     dijkstra(start: T, finish: T) {
-        this.reset()
+        this.visited = new Set();
+        this.costs = new Map();
         const queue: T[] = []; 
         const parents: Map<T, T> = new Map();
 
